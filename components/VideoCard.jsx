@@ -1,6 +1,7 @@
+import { icons } from "../constants";
+
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
-import { icons } from "../constants";
 
 const VideoCard = ({
   video: {
