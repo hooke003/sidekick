@@ -1,18 +1,25 @@
+// Importing necessary components and modules from React Native and other libraries
 import { View, Text, Image } from "react-native";
 import React from "react";
 import { Tabs, Redirect } from "expo-router";
 
-import { icons } from "../../constants";
+import { icons } from "../../constants"; // Importing icons from a constants file
 
+// This file allows you to navigate pages using the bottom navigation bar
+
+// This is a component for the tab icon that shows the icon and name of the tab
 const TabIcon = ({ icon, color, name, focused }) => {
   return (
+    // A view to contain the icon and text, with some styling for alignment
     <View className="items-center justify-center gap-2">
+      {/* Displaying the icon */}
       <Image 
         source={icon} 
         resizeMode="contain"
         tintColor={color}
         className="w-6 h-6"
       />
+      {/* Displaying the name of the tab, changing style if it's focused */}
       <Text className={`${focused ? 'font-psemibold' : 'font-pregular'} text-xs`} style={{color: color}}>
         {name}
       </Text>
@@ -20,47 +27,50 @@ const TabIcon = ({ icon, color, name, focused }) => {
   );
 };
 
+// This is the main layout for the tabs
 const TabsLayout = () => {
   return (
     <>
       <Tabs
         screenOptions={{
-          tabBarShowLabel: false,
-          tabBarActiveTintColor: '#FFA001',
-          tabBarInactiveTintColor: '#CDCDE0',
+          // Setting common options for all tabs
+          tabBarShowLabel: false, // Hides the default tab labels
+          tabBarActiveTintColor: '#FFA001', // Color of the active tab icon
+          tabBarInactiveTintColor: '#CDCDE0', // Color of the inactive tab icons
           tabBarStyle: {
-            backgroundColor: '#161622',
-            borderTopWidth: 1,
-            borderTopColor: '#232533', 
-            height: 84,
+            backgroundColor: '#161622', // Background color of the tab bar
+            borderTopWidth: 1, // Width of the top border of the tab bar
+            borderTopColor: '#232533', // Color of the top border of the tab bar
+            height: 84, // Height of the tab bar
           }
         }}
       >
+        {/* Defining each tab screen */}
         <Tabs.Screen
           name="home"
           options={{
-            title: "Home",
-            headerShown: false,
+            title: "Home", // Title of the tab
+            headerShown: false, // Hides the header
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
-                icon={icons.home}
-                color={color}
-                name="Home"
-                focused={focused}
+                icon={icons.home} // Icon for the home tab
+                color={color} // Color for the icon and text
+                name="Home" // Name of the tab
+                focused={focused} // Whether the tab is focused
               />
             ),
           }}
         />
         <Tabs.Screen
-          name="bookmark"
+          name="shop"
           options={{
-            title: "Bookmark",
+            title: "Shop",
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
-                icon={icons.bookmark}
+                icon={icons.bookmark} // Icon for the bookmark tab
                 color={color}
-                name="Bookmark"
+                name="Shop"
                 focused={focused}
               />
             ),
@@ -73,7 +83,7 @@ const TabsLayout = () => {
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
-                icon={icons.plus}
+                icon={icons.plus} // Icon for the create tab
                 color={color}
                 name="Create"
                 focused={focused}
@@ -88,7 +98,7 @@ const TabsLayout = () => {
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
-                icon={icons.profile}
+                icon={icons.profile} // Icon for the profile tab
                 color={color}
                 name="Profile"
                 focused={focused}
@@ -101,4 +111,6 @@ const TabsLayout = () => {
   );
 };
 
+// Exporting the TabsLayout component so it can be used in other parts of the app
 export default TabsLayout;
+
