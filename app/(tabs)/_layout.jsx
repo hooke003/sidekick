@@ -1,26 +1,26 @@
-// Importing necessary components and modules from React Native and other libraries
-import { View, Text, Image } from "react-native";
-import React from "react";
-import { Tabs, Redirect } from "expo-router";
-
-import { icons } from "../../constants"; // Importing icons from a constants file
-
-// This file allows you to navigate pages using the bottom navigation bar
+import React from 'react';
+import { View, Text, Image } from 'react-native';
+import { Tabs } from 'expo-router';
+import { UserIcon, HomeIcon, PlusCircleIcon, ShoppingBagIcon } from 'react-native-heroicons/solid'; // Imported from react-native-heroicons
 
 // This is a component for the tab icon that shows the icon and name of the tab
-const TabIcon = ({ icon, color, name, focused }) => {
+const TabIcon = ({ icon, IconComponent, color, name, focused }) => {
   return (
     // A view to contain the icon and text, with some styling for alignment
     <View className="items-center justify-center gap-2">
-      {/* Displaying the icon */}
-      <Image 
-        source={icon} 
-        resizeMode="contain"
-        tintColor={color}
-        className="w-6 h-6"
-      />
+      {/* Displaying the icon, either from an Image or a component */}
+      {IconComponent ? (
+        <IconComponent color={color} className="w-6 h-6" size={30} />
+      ) : (
+        <Image 
+          source={icon} 
+          resizeMode="contain"
+          style={{ tintColor: color }}
+          className="w-6 h-6"
+        />
+      )}
       {/* Displaying the name of the tab, changing style if it's focused */}
-      <Text className={`${focused ? 'font-psemibold' : 'font-pregular'} text-xs`} style={{color: color}}>
+      <Text className={`${focused ? 'font-semibold' : 'font-regular'} text-xs`} style={{ color }}>
         {name}
       </Text>
     </View>
@@ -53,7 +53,7 @@ const TabsLayout = () => {
             headerShown: false, // Hides the header
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
-                icon={icons.home} // Icon for the home tab
+                IconComponent={HomeIcon} // Component for the home icon
                 color={color} // Color for the icon and text
                 name="Home" // Name of the tab
                 focused={focused} // Whether the tab is focused
@@ -68,7 +68,7 @@ const TabsLayout = () => {
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
-                icon={icons.bookmark} // Icon for the bookmark tab
+                IconComponent={ShoppingBagIcon} // Component for the create icon
                 color={color}
                 name="Shop"
                 focused={focused}
@@ -83,7 +83,7 @@ const TabsLayout = () => {
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
-                icon={icons.plus} // Icon for the create tab
+                IconComponent={PlusCircleIcon} // Component for the create icon
                 color={color}
                 name="Create"
                 focused={focused}
@@ -98,7 +98,7 @@ const TabsLayout = () => {
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
-                icon={icons.profile} // Icon for the profile tab
+                IconComponent={UserIcon} // Component for the user icon
                 color={color}
                 name="Profile"
                 focused={focused}
@@ -113,4 +113,3 @@ const TabsLayout = () => {
 
 // Exporting the TabsLayout component so it can be used in other parts of the app
 export default TabsLayout;
-
