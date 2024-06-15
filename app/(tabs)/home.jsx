@@ -15,8 +15,8 @@ import SearchInput from "../../components/SearchInput"; // Importing a custom se
 import Trending from "../../components/Trending"; // Importing a custom trending component
 import EmptyState from "../../components/EmptyState"; // Importing a custom empty state component
 import VideoCard from "../../components/VideoCard"; // Importing a custom video card component
-import { getAllPosts, getLatestPosts } from "../../lib/appwrite"; // Importing functions to get posts
-import useAppwrite from "../../lib/useAppwrite"; // Importing a custom hook for Appwrite
+import { getAllPosts, getLatestPosts } from "../../lib/firebase"; // Importing functions to get posts
+import useFirebase from "../../lib/useFirebase"; // Importing a custom hook for Firebase
 import { useGlobalContext } from "../../context/GlobalProvider"; // Importing global context
 
 // This is the home page component
@@ -25,8 +25,8 @@ const Home = () => {
   const { user, setUser, isLoading, setIsLoggedIn } = useGlobalContext();
   
   // Using custom hook to get posts data
-  const { data: posts, refetch } = useAppwrite(getAllPosts);
-  const { data: latestPosts } = useAppwrite(getLatestPosts);
+  const { data: posts, refetch } = useFirebase(getAllPosts);
+  const { data: latestPosts } = useFirebase(getLatestPosts);
 
   // State to manage refreshing state
   const [refreshing, setRefreshing] = useState(false);
