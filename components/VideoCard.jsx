@@ -2,19 +2,27 @@
 import { icons } from "../constants"; // Importing icons from a constants file
 import { Video, ResizeMode } from "expo-av"; // Importing Video component from expo-av
 import { View, Text, Image, TouchableOpacity } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 
 // This component represents a video card
 const VideoCard = ({
   video: {
     title, // Title of the video
     thumbnail, // Thumbnail image URL of the video
-    video, // Video URL
+    video: videoUrl, // Video URL
     creator: { username, avatar }, // Creator's username and avatar
   },
 }) => {
   // State to manage video play status
   const [play, setPlay] = useState(false);
+  const [error, setError] = useState(null); // State to manage errors
+  const videoRef = useRef(null); // Ref for the video component
+
+  // Function to handle play button press
+  const handlePlayPress = () => {
+    setError(null); // Reset any previous errors
+    setPlay(true); // Set play state to true
+  };
 
   return (
     // Container for the video card
@@ -54,11 +62,17 @@ const VideoCard = ({
       {/* Video or thumbnail with play button */}
       {play ? (
         <Video
-          source={{ uri: video }} // Video URL
+          ref={videoRef} // Ref for the video component
+          source={{ uri: videoUrl }} // Video URL
           className="w-full h-60 rounded-xl mt-3"
           resizeMode={ResizeMode.CONTAIN}
           useNativeControls
           shouldPlay
+          onError={(error) => {
+            console.error('Video Error:', error);
+            setError('There was an error playing the video.');
+            setPlay(false);
+          }}
           onPlaybackStatusUpdate={(status) => {
             // Stop playing when the video finishes
             if (status.didJustFinish) {
@@ -69,7 +83,7 @@ const VideoCard = ({
       ) : (
         <TouchableOpacity
           activeOpacity={0.7}
-          onPress={() => setPlay(true)} // Play video on press
+          onPress={handlePlayPress} // Play video on press
           className="w-full h-60 rounded-xl mt-3 relative justify-center items-center"
         >
           <Image
@@ -84,6 +98,11 @@ const VideoCard = ({
             resizeMode="contain"
           />
         </TouchableOpacity>
+      )}
+      {error && (
+        <Text className="text-red-500 mt-2">
+          {error}
+        </Text>
       )}
     </View>
   );
