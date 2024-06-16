@@ -44,7 +44,7 @@ const Home = () => {
       {/* FlatList for displaying a list of posts */}
       <FlatList
         data={posts} // Data for the list
-        keyExtractor={(item) => item.$id} // Unique key for each item
+        keyExtractor={(item) => item.id} // Unique key for each item
         renderItem={({ item, index }) => (
           <VideoCard key={index} video={item} /> // Rendering each video card
         )}
@@ -58,7 +58,7 @@ const Home = () => {
                   Welcome Back,
                 </Text>
                 <Text className="text-2xl font-psemibold text-white">
-                  {user?.username}
+                  {user?.username || "Guest"}
                 </Text>
               </View>
               <View className="mt-1.5">
@@ -76,7 +76,7 @@ const Home = () => {
               <Text className="text-gray-100 text-lg font-pregular mb-3">
                 Latest Videos
               </Text>
-              <Trending posts={latestPosts ?? []} /> {/* Trending videos */}
+              <Trending posts={latestPosts ?? []} /> 
             </View>
           </View>
         )}

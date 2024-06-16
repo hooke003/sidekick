@@ -11,7 +11,7 @@ const zoomIn = {
     scale: 0.9,
   },
   1: {
-    scale: 1,
+    scale: 1.05,
   },
 };
 
@@ -34,7 +34,7 @@ const TrendingItem = ({ activeItem, item }) => {
     // Animatable view to handle animations
     <Animatable.View
       className="mr-5"
-      animation={activeItem === item.$id ? zoomIn : zoomOut}
+      animation={activeItem === item.id ? zoomIn : zoomOut}
       duration={500}
     >
       {play ? (
@@ -95,7 +95,7 @@ const Trending = ({ posts }) => {
     <FlatList
       data={posts} // Data for the list
       horizontal // Display the list horizontally
-      keyExtractor={(item) => item.$id} // Unique key for each item
+      keyExtractor={(item) => item.id} // Unique key for each item
       renderItem={({ item }) => (
         <TrendingItem activeItem={activeItem} item={item} /> // Render each trending item
       )}
