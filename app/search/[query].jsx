@@ -3,15 +3,15 @@ import { useLocalSearchParams } from "expo-router";
 import { View, Text, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import useAppwrite from "../../lib/useAppwrite";
-import { searchPosts } from "../../lib/appwrite";
+import useFirebase from "../../lib/useFirebase";
+import { searchPosts } from "../../lib/firebase";
 import EmptyState from "../../components/EmptyState";
 import VideoCard from "../../components/VideoCard";
 import SearchInput from "../../components/SearchInput";
 
 const Search = () => {
   const { query } = useLocalSearchParams();
-  const { data: posts, refetch } = useAppwrite(() => searchPosts(query));
+  const { data: posts, refetch } = useFirebase(() => searchPosts(query));
 
   useEffect(() => {
     refetch();
@@ -21,15 +21,9 @@ const Search = () => {
     <SafeAreaView className="bg-primary h-full">
       <FlatList
         data={posts}
-        keyExtractor={(item) => item.$id}
-        renderItem={({ item }) => (
-          <VideoCard
-            title={item.title}
-            thumbnail={item.thumbnail}
-            video={item.video}
-            creator={item.creator.username}
-            avatar={item.creator.avatar}
-          />
+        keyExtractor={(item) => item.id} // Unique key for each item
+        renderItem={({ item, index }) => (
+          <VideoCard key={index} video={item} /> // Rendering each video card
         )}
         ListHeaderComponent={() => (
           <>
