@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, Text, Image } from 'react-native';
 import { Tabs } from 'expo-router';
-import { UserIcon, HomeIcon, PlusCircleIcon, ShoppingBagIcon } from 'react-native-heroicons/solid'; // Imported from react-native-heroicons
+import { StatusBar } from "expo-status-bar";
+import { UserIcon, HomeIcon, PlusCircleIcon, ShoppingBagIcon, ChatBubbleOvalLeftIcon } from 'react-native-heroicons/solid'; // Imported from react-native-heroicons
 
 // This is a component for the tab icon that shows the icon and name of the tab
 const TabIcon = ({ icon, IconComponent, color, name, focused }) => {
@@ -106,10 +107,30 @@ const TabsLayout = () => {
             ),
           }}
         />
+        <Tabs.Screen
+          name="messages"
+          options={{
+            title: "Messages",
+            headerShown: false,
+            tabBarIcon: ({ color, focused }) => (
+              <TabIcon
+                IconComponent={ChatBubbleOvalLeftIcon} // Component for the user icon
+                color={color}
+                name="Messages"
+                focused={focused}
+              />
+            ),
+          }}
+        />
       </Tabs>
+
+      {/* Setting the status bar style */}
+      <StatusBar backgroundColor="#161622" style="light"/>
     </>
   );
 };
+
+
 
 // Exporting the TabsLayout component so it can be used in other parts of the app
 export default TabsLayout;

@@ -3,7 +3,7 @@ import { View, Text, FlatList, TouchableOpacity, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import useAppwrite from "../../lib/useAppwrite";
-import { getUserPosts, signOut } from "../../lib/appwrite";
+import { getUserPosts, signOut } from "../../lib/firebase";
 import EmptyState from "../../components/EmptyState";
 import VideoCard from "../../components/VideoCard";
 import { useGlobalContext } from "../../context/GlobalProvider";
@@ -11,6 +11,7 @@ import { icons } from "../../constants";
 import InfoBox from "../../components/InfoBox";
 
 import { router } from "expo-router";
+import useFirebase from "../../lib/useFirebase";
 
 const Profile = () => {
   const { user, setUser, isLoading, setIsLoggedIn } = useGlobalContext();
@@ -32,12 +33,19 @@ const Profile = () => {
     );
   }
 
-  const { data: posts } = useAppwrite(() => getUserPosts(user.$id));
+  console.log(`Fetching posts for user ID: ${user.id}`); // Debugging user ID
+
+  const { data: posts, error } = useFirebase(() => getUserPosts(user.id));
+
+  if (error) {
+    console.error("Error fetching user posts:", error); // Logging error
+  }
+
   const logout = async () => {
     await signOut();
-    setUser(null)
-    setIsLoggedIn(false)
-    router.replace('/sign-in')
+    setUser(null);
+    setIsLoggedIn(false);
+    router.replace('/sign-in');
   };
 
   return (
@@ -109,3 +117,4 @@ const Profile = () => {
 };
 
 export default Profile;
+
