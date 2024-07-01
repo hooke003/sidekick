@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { SplashScreen, Slot, Stack } from "expo-router";
 import { useFonts } from "expo-font";
 import GlobalProvider from "../context/GlobalProvider";
+import WebSocketProvider from "../context/WebSocketProvider";
 
 // This makes sure the splash screen (the first screen you see when the app opens) doesn't hide automatically
 SplashScreen.preventAutoHideAsync();
@@ -47,12 +48,18 @@ const RootLayout = () => {
   // The main return statement that defines what is shown on the screen
   return (
     <GlobalProvider>
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="search/[query]" options={{ headerShown: false }} />
-      </Stack>
+      <WebSocketProvider>
+        <Stack>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="search/[query]"
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen name="MessagingScreen" options={{ headerShown: false }} />
+        </Stack>
+      </WebSocketProvider>
     </GlobalProvider>
   );
 };
