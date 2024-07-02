@@ -1,7 +1,7 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, TouchableOpacity, Image, Text, Alert, Dimensions, Platform } from 'react-native';
-import { GiftedChat, Bubble, Send, InputToolbar } from 'react-native-gifted-chat';
+import { GiftedChat, Bubble, Send, InputToolbar, Composer } from 'react-native-gifted-chat';
 import { Video } from 'expo-av';
 import { useWebSocket } from '../context/WebSocketProvider';
 import { useGlobalContext } from '../context/GlobalProvider';
@@ -111,10 +111,10 @@ const MessagingScreen = () => {
       if (currentMessage.image) {
         return (
           <TouchableOpacity onPress={() => setSelectedImage(currentMessage.image)}>
-            <View className="bg-black rounded-lg overflow-hidden" style={{ width, height }}>
+            <View style={{ width, height, backgroundColor: 'black', borderRadius: 13, overflow: 'hidden' }}>
               <Image
                 source={{ uri: currentMessage.image }}
-                className="w-full h-full"
+                style={{ width: '100%', height: '100%' }}
               />
             </View>
           </TouchableOpacity>
@@ -123,10 +123,10 @@ const MessagingScreen = () => {
 
       if (currentMessage.video) {
         return (
-          <View className="bg-black rounded-lg overflow-hidden" style={{ width, height }}>
+          <View style={{ width, height, backgroundColor: 'black', borderRadius: 13, overflow: 'hidden' }}>
             <Video
               source={{ uri: currentMessage.video }}
-              className="w-full h-full"
+              style={{ width: '100%', height: '100%' }}
               useNativeControls
               resizeMode="contain"
               isLooping
@@ -167,7 +167,16 @@ const MessagingScreen = () => {
 
   const renderSend = (props) => {
     return (
-      <Send {...props} containerStyle="justify-center items-center w-11 h-11 mr-1">
+      <Send
+        {...props}
+        containerStyle={{
+          justifyContent: 'center',
+          alignItems: 'center',
+          width: 44,
+          height: 44,
+          marginRight: 4,
+        }}
+      >
         <Ionicons name="send" size={24} color="#5B37B7" />
       </Send>
     );
@@ -177,10 +186,16 @@ const MessagingScreen = () => {
     return (
       <InputToolbar
         {...props}
-        containerStyle="bg-black-200 border-t-0 pt-1.5 pb-1.5 items-center justify-center"
-        primaryStyle="items-center"
+        containerStyle={{
+          backgroundColor: '#161622',
+          borderTopWidth: 0,
+          paddingTop: 6,
+          paddingBottom: 6,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
         renderActions={() => (
-          <TouchableOpacity onPress={pickMedia} className="justify-center items-center w-11 h-11 ml-1">
+          <TouchableOpacity onPress={pickMedia} style={{ justifyContent: 'center', alignItems: 'center', width: 44, height: 44, marginLeft: 4 }}>
             <Ionicons name="image" size={24} color="#5B37B7" />
           </TouchableOpacity>
         )}
@@ -188,20 +203,38 @@ const MessagingScreen = () => {
     );
   };
 
+  const renderComposer = (props) => (
+    <Composer
+      {...props}
+      textInputStyle={{
+        color: 'white',
+        backgroundColor: '#1E1E2D',
+        borderRadius: 9999,
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        marginLeft: 10,
+        marginRight: 10,
+        fontSize: 16,
+        lineHeight: 24,
+        maxHeight: 96,
+      }}
+    />
+  );
+
   return (
-    <SafeAreaView className="bg-primary border-2 h-full">
-      <View className="flex-row items-center p-2.5 border-b border-black-200">
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#161622' }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', padding: 10, borderBottomWidth: 1, borderBottomColor: '#2C2C2E' }}>
         <TouchableOpacity onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
-        <View className="flex-1 flex-row items-center ml-2.5">
+        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', marginLeft: 10 }}>
           <Image 
             source={{ uri: 'https://via.placeholder.com/40' }} 
-            className="w-10 h-10 rounded-full mr-2.5"
+            style={{ width: 40, height: 40, borderRadius: 20, marginRight: 10 }}
           />
-          <Text className="text-white text-lg font-psemibold">{recipientName}</Text>
+          <Text style={{ color: 'white', fontSize: 18, fontWeight: '600' }}>{recipientName}</Text>
         </View>
-        <TouchableOpacity className="mx-2">
+        <TouchableOpacity style={{ marginHorizontal: 8 }}>
           <Ionicons name="call" size={24} color="white" />
         </TouchableOpacity>
         <TouchableOpacity>
@@ -218,12 +251,8 @@ const MessagingScreen = () => {
         renderBubble={renderBubble}
         renderSend={renderSend}
         renderInputToolbar={renderInputToolbar}
+        renderComposer={renderComposer}
         alwaysShowSend
-        textInputProps={{
-          className: "flex-1 text-white bg-black-100 rounded-full px-3 py-2 mx-2.5 text-base leading-6 max-h-24",
-          placeholderTextColor: "#666",
-          multiline: true,
-        }}
         text={inputMessage}
         onInputTextChanged={text => setInputMessage(text)}
         bottomOffset={Platform.select({ios: 34, android: 0})}
