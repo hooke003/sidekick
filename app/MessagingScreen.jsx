@@ -1,6 +1,6 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, StyleSheet, TouchableOpacity, Image, Text, Alert, Modal, Dimensions } from 'react-native';
+import { View, TouchableOpacity, Image, Text, Alert, Dimensions, Platform } from 'react-native';
 import { GiftedChat, Bubble, Send, InputToolbar } from 'react-native-gifted-chat';
 import { Video } from 'expo-av';
 import { useWebSocket } from '../context/WebSocketProvider';
@@ -15,6 +15,7 @@ const MAX_WIDTH = Dimensions.get('window').width * 0.7; // Max width for media
 const MessagingScreen = () => {
   const [messages, setMessages] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [inputMessage, setInputMessage] = useState('');
   const { sendMessage, socket } = useWebSocket();
   const { user } = useGlobalContext();
   const { recipientId, recipientName } = useLocalSearchParams();
@@ -58,21 +59,20 @@ const MessagingScreen = () => {
     };
     sendMessage(messageData);
     setMessages(previousMessages => GiftedChat.append(previousMessages, newMessages));
+    setInputMessage('');
   }, [sendMessage, user.id, recipientId]);
 
   const pickMedia = async () => {
     try {
-      // Request media library permissions
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
         alert('Sorry, we need camera roll permissions to make this work!');
         return;
       }
 
-      // Launch image library to pick an image or video
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
-        allowsEditing: false, // Disable the crop screen
+        allowsEditing: false,
         quality: 1,
       });
 
@@ -111,10 +111,10 @@ const MessagingScreen = () => {
       if (currentMessage.image) {
         return (
           <TouchableOpacity onPress={() => setSelectedImage(currentMessage.image)}>
-            <View style={[styles.mediaContainer, { width, height }]}>
+            <View className="bg-black rounded-lg overflow-hidden" style={{ width, height }}>
               <Image
                 source={{ uri: currentMessage.image }}
-                style={styles.media}
+                className="w-full h-full"
               />
             </View>
           </TouchableOpacity>
@@ -123,10 +123,10 @@ const MessagingScreen = () => {
 
       if (currentMessage.video) {
         return (
-          <View style={[styles.mediaContainer, { width, height }]}>
+          <View className="bg-black rounded-lg overflow-hidden" style={{ width, height }}>
             <Video
               source={{ uri: currentMessage.video }}
-              style={styles.media}
+              className="w-full h-full"
               useNativeControls
               resizeMode="contain"
               isLooping
@@ -167,10 +167,8 @@ const MessagingScreen = () => {
 
   const renderSend = (props) => {
     return (
-      <Send {...props}>
-        <View style={styles.sendButton}>
-          <Ionicons name="send" size={24} color="#5B37B7" />
-        </View>
+      <Send {...props} containerStyle="justify-center items-center w-11 h-11 mr-1">
+        <Ionicons name="send" size={24} color="#5B37B7" />
       </Send>
     );
   };
@@ -179,26 +177,31 @@ const MessagingScreen = () => {
     return (
       <InputToolbar
         {...props}
-        containerStyle={styles.inputToolbar}
-        primaryStyle={styles.inputPrimary}
+        containerStyle="bg-black-200 border-t-0 pt-1.5 pb-1.5 items-center justify-center"
+        primaryStyle="items-center"
+        renderActions={() => (
+          <TouchableOpacity onPress={pickMedia} className="justify-center items-center w-11 h-11 ml-1">
+            <Ionicons name="image" size={24} color="#5B37B7" />
+          </TouchableOpacity>
+        )}
       />
     );
   };
 
   return (
     <SafeAreaView className="bg-primary border-2 h-full">
-      <View style={styles.header}>
+      <View className="flex-row items-center p-2.5 border-b border-black-200">
         <TouchableOpacity onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
-        <View style={styles.headerInfo}>
+        <View className="flex-1 flex-row items-center ml-2.5">
           <Image 
             source={{ uri: 'https://via.placeholder.com/40' }} 
-            style={styles.avatar}
+            className="w-10 h-10 rounded-full mr-2.5"
           />
-          <Text style={styles.headerText}>{recipientName}</Text>
+          <Text className="text-white text-lg font-psemibold">{recipientName}</Text>
         </View>
-        <TouchableOpacity>
+        <TouchableOpacity className="mx-2">
           <Ionicons name="call" size={24} color="white" />
         </TouchableOpacity>
         <TouchableOpacity>
@@ -216,11 +219,14 @@ const MessagingScreen = () => {
         renderSend={renderSend}
         renderInputToolbar={renderInputToolbar}
         alwaysShowSend
-        renderActions={() => (
-          <TouchableOpacity onPress={pickMedia} style={styles.iconButton}>
-            <Ionicons name="image" size={24} color="#5B37B7" />
-          </TouchableOpacity>
-        )}
+        textInputProps={{
+          className: "flex-1 text-white bg-black-100 rounded-full px-3 py-2 mx-2.5 text-base leading-6 max-h-24",
+          placeholderTextColor: "#666",
+          multiline: true,
+        }}
+        text={inputMessage}
+        onInputTextChanged={text => setInputMessage(text)}
+        bottomOffset={Platform.select({ios: 34, android: 0})}
       />
 
       {selectedImage && (
@@ -235,65 +241,4 @@ const MessagingScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#000000',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#1C1C1E',
-  },
-  headerInfo: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: 10,
-  },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    marginRight: 10,
-  },
-  headerText: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  inputToolbar: {
-    backgroundColor: '#1C1C1E',
-    borderTopWidth: 1,
-    borderTopColor: '#2C2C2E',
-  },
-  inputPrimary: {
-    color: 'white',
-  },
-  iconButton: {
-    marginLeft: 10,
-    marginBottom: 5,
-  },
-  sendButton: {
-    marginRight: 10,
-    marginBottom: 5,
-  },
-  mediaContainer: {
-    backgroundColor: '#000',
-    borderRadius: 10,
-    overflow: 'hidden',
-  },
-  media: {
-    width: '100%',
-    height: '100%',
-  },
-});
-
 export default MessagingScreen;
-
-
-
-
-
